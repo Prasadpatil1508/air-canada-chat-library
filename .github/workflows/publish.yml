@@ -1,0 +1,69 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # create GitHub Release and upload assets
+  packages: write  # publish Android library to GitHub Packages (Maven)
+
+jobs:
+  publish:
+    runs-on: macos-latest
+
+    env:
+      GRADLE_OPTS: "-Xmx4g"
+      ORG_GRADLE_PROJECT_kotlin.native.ignoreDisabledTargets: "true"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: Inject Connect config for remote library build
+        run: |
+          echo "API_GATEWAY=${{ secrets.API_GATEWAY }}" >> local.properties
+          echo "CONTACT_FLOW_ID=${{ secrets.CONTACT_FLOW_ID }}" >> local.properties
+          echo "INSTANCE_ID=${{ secrets.INSTANCE_ID }}" >> local.properties
+          echo "REGION=${{ secrets.REGION }}" >> local.properties
+
+      - name: Publish Android library to GitHub Packages
+        run: |
+          chmod +x gradlew
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          ./gradlew clean \
+            :shared:generateConnectConfig \
+            :shared:publishAndroidPublicationToGitHubPackagesRepository \
+            -PLIB_VERSION="$VERSION" \
+            --no-daemon \
+            --no-configuration-cache
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assemble XCFramework
+        run: |
+          ./gradlew :shared:assembleSharedReleaseXCFramework \
+            --no-daemon \
+            --no-configuration-cache
+
+      - name: Zip XCFramework and compute checksum
+        run: |
+          cd shared/build/XCFrameworks/release
+          XCF=$(find . -maxdepth 1 -type d -name '*.xcframework' | head -1)
+          zip -r ChatSDK.xcframework.zip "$XCF"
+          shasum -a 256 ChatSDK.xcframework.zip | awk '{ print $1 }' > ../../../ChatSDK.xcframework.zip.sha256
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            shared/build/XCFrameworks/release/ChatSDK.xcframework.zip
+            shared/build/ChatSDK.xcframework.zip.sha256
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

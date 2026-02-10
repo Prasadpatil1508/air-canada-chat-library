@@ -1,4 +1,7 @@
 // swift-tools-version: 5.9
+// Swift Package Manager: add this repo as a package dependency to get the ChatSDK XCFramework.
+// Binary URL pattern: https://github.com/Prasadpatil1508/air-canada-chat-library/releases/download/${TAG}/ChatSDK.xcframework.zip
+// After each release: update url tag and checksum (swift package compute-checksum ChatSDK.xcframework.zip).
 import PackageDescription
 
 let package = Package(
@@ -10,8 +13,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "ChatSDK",
-            url: "https://github.com/Prasadpatil1508/chat-library-poc/releases/download/v1.0.30/ChatSDK.xcframework.zip",
-            checksum: "de04454481f023eb3357f39b613d646dc853cdb13f593bd5134c0fcba6115190"
+            url: "https://github.com/Prasadpatil1508/air-canada-chat-library/releases/download/v1.0.0/ChatSDK.xcframework.zip",
+            checksum: "0000000000000000000000000000000000000000000000000000000000000000"
         ),
     ]
 )
