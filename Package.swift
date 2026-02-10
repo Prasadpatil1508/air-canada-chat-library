@@ -13,8 +13,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "ChatSDK",
-            url: "https://github.com/Prasadpatil1508/air-canada-chat-library/releases/download/v1.0.0/ChatSDK.xcframework.zip",
-            checksum: "0000000000000000000000000000000000000000000000000000000000000000"
+            url: "https://github.com/Prasadpatil1508/air-canada-chat-library/releases/download/v1.0.31/ChatSDK.xcframework.zip",
+            checksum: "317ef68a3d9e46107a119e684301293310325d3be164c9518248cdbcd83c33c8"
         ),
     ]
 )
