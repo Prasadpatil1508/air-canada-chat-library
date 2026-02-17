@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.painter.Painter
 
 /**
  * Returns a [Painter] for the AI/incoming message avatar.
- * Android: loaded from the library's res/drawable (reliably merged into the host APK).
+ * Android: Base64-embedded at build time from composeResources (reliable in library AAR).
  * iOS: loaded from Compose Multiplatform resources.
  */
 @Composable
