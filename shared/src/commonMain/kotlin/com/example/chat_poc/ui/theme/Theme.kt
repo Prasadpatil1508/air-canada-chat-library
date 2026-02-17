@@ -10,11 +10,14 @@ import androidx.compose.ui.graphics.Color
  * Chat library theme (colors + typography) aligned with
  * [amazon-connect-chat-ui-examples](https://github.com/amazon-connect/amazon-connect-chat-ui-examples).
  * Use [ChatPocTheme] to wrap chat UI (e.g. bottom sheet content).
+ * Supports light and dark modes for header and surfaces.
  */
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80,
+    surface = HeaderBackgroundDark,
+    onSurface = HeaderOnBackgroundDark,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -24,6 +27,8 @@ private val LightColorScheme = lightColorScheme(
     onPrimaryContainer = Color.White,
     secondary = PurpleGrey40,
     tertiary = Pink40,
+    surface = HeaderBackgroundLight,
+    onSurface = HeaderOnBackgroundLight,
     onSurfaceVariant = ChatOnSurfaceVariant,
     outline = ChatPrimary,
 )

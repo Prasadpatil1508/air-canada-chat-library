@@ -85,8 +85,8 @@ internal object AiAvatarData {
 """.trimIndent())
     }
 }
-// ---------- HEADER LOGO: Base64 embedding for library AAR ----------
-val headerLogoSource = file("src/commonMain/composeResources/drawable/header_logo.png")
+// ---------- HEADER LOGO (AC logo): Base64 embedding for library AAR ----------
+val headerLogoSource = file("src/commonMain/composeResources/drawable/ac_logo.png")
 val generateHeaderLogoBase64 = tasks.register("generateHeaderLogoBase64") {
     notCompatibleWithConfigurationCache("Task uses project.file() and script references for Base64 embedding")
     inputs.file(headerLogoSource)

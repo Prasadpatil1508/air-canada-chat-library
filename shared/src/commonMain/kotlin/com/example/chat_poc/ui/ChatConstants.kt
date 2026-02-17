@@ -16,11 +16,14 @@ object ChatConstants {
         const val DISCLAIMER =
             "AI can make mistakes sometimes. Always double-check important information to ensure accuracy."
 
-        /** Fixed header title (no host-provided title in header). */
-        const val HEADER_TITLE = "Air Canada Virtual Assistant"
+        /** Fixed header title (main line in bottom sheet header). */
+        const val HEADER_TITLE = "AC Assistant"
 
         /** BETA pill label next to title. */
         const val BETA = "BETA"
+
+        /** Default header subtitle when no custom subtitle is provided (e.g. later replace with user name). */
+        const val HEADER_SUBTITLE_DEFAULT = "Chatting with Air Canada"
 
         /** Minimize button character. */
         const val MINIMIZE_ICON = "−"
@@ -93,14 +96,24 @@ object ChatConstants {
     // ─── Dimensions (bottom sheet / header / input) ──────────────────────────────────
 
     object Dimensions {
-        val headerPaddingHorizontal: Dp = 20.dp
-        val headerPaddingVertical: Dp = 16.dp
-        val headerLogoSize: Dp = 80.dp
-        val headerLogoSpacer: Dp = 12.dp
-        val headerDisclaimerTop: Dp = 8.dp
+        // Bottom sheet header (redesigned: grab handle, logo, title, beta, subtitle, separator)
+        val headerTopCornerRadius: Dp = 20.dp
+        val headerGrabHandleWidth: Dp = 36.dp
+        val headerGrabHandleHeight: Dp = 4.dp
+        val headerGrabHandleTopMargin: Dp = 8.dp
+        val headerGrabHandleBottomMargin: Dp = 12.dp
+        val headerPaddingHorizontal: Dp = 15.dp
+        val headerLogoSize: Dp = 25.dp
+        val headerLogoTitleSpacer: Dp = 10.dp
+        val headerTitleBetaSpacer: Dp = 8.dp
         val headerBetaPillPaddingH: Dp = 8.dp
         val headerBetaPillPaddingV: Dp = 4.dp
-        val headerBetaPillRadius: Dp = 12.dp
+        val headerBetaPillRadius: Dp = 16.dp
+        val headerSubtitleTop: Dp = 0.dp
+        val headerSeparatorHeight: Dp = 1.dp
+        val headerSeparatorTopMargin: Dp = 12.dp
+        val headerLogoSpacer: Dp = 12.dp
+        val headerDisclaimerTop: Dp = 8.dp
 
         val newChatContentPaddingTop: Dp = 16.dp
         val newChatContentPaddingHorizontal: Dp = 20.dp

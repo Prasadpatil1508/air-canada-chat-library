@@ -15,6 +15,7 @@ import com.example.chat_poc.ui.ChatConstants
 import com.example.chat_poc.ui.ChatUi
 import com.example.chat_poc.ui.theme.BottomSectionBackground
 import com.example.chat_poc.ui.theme.ChatDisclaimer
+import com.example.chat_poc.ui.views.BottomSheetHeader
 import com.example.chat_poc.util.ChatLibraryLog
 import com.example.chat_poc.util.formatMessageTime
 import com.example.chat_poc.util.UrlOpener
@@ -46,7 +47,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,11 +70,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import com.example.chat_poc.ui.theme.HeaderGradientEnd
-import com.example.chat_poc.ui.theme.HeaderGradientStart
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -87,7 +84,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.example.chat_poc.ui.rememberAiAvatarPainter
 import com.example.chat_poc.ui.rememberCustomerAvatarPainter
-import com.example.chat_poc.ui.rememberHeaderLogoPainter
 
 /**
  * Shared bottom sheet content (commonMain).
@@ -176,19 +172,20 @@ fun ChatBottomSheetContent(
         },
         sheetState = sheetState,
         dragHandle = null,
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
-            ChatSheetHeader(
-                onMinimize = {
+            BottomSheetHeader(
+                subtitle = config.headerSubtitle(),
+                onClose = {
                     ChatSessionStorage.clear()
                     onDismiss()
                 },
-                onClose = {
+                onMinimize = {
                     ChatSessionStorage.clear()
                     onDismiss()
                 },
@@ -336,114 +333,6 @@ fun ChatBottomSheetContent(
                     hasStoredToken = false,
                     onResumeChat = { },
                     onStartNewChat = { },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ChatSheetHeader(
-    onMinimize: () -> Unit,
-    onClose: () -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        HeaderGradientStart,
-                        HeaderGradientEnd,
-                    ),
-                    start = Offset(0f, 0f),
-                    end = Offset(1000f, 1000f),
-                ),
-            )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ChatConstants.Dimensions.headerPaddingHorizontal)
-                .padding(top = 0.dp, bottom = ChatConstants.Dimensions.headerPaddingVertical)
-        ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Image(
-                        painter = rememberHeaderLogoPainter(),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(ChatConstants.Dimensions.headerLogoSize)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Fit,
-                    )
-                }
-                Row(
-                    modifier = Modifier.align(Alignment.CenterEnd),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    IconButton(onClick = onMinimize) {
-                        Icon(
-                            imageVector = Icons.Filled.Remove,
-                            contentDescription = "Minimize",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                    IconButton(onClick = onClose) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Close",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.size(ChatConstants.Dimensions.headerLogoSpacer))
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        text = ChatConstants.Strings.HEADER_TITLE,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                    )
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                RoundedCornerShape(ChatConstants.Dimensions.headerBetaPillRadius)
-                            )
-                            .padding(
-                                horizontal = ChatConstants.Dimensions.headerBetaPillPaddingH,
-                                vertical = ChatConstants.Dimensions.headerBetaPillPaddingV
-                            ),
-                    ) {
-                        Text(
-                            text = ChatConstants.Strings.BETA,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.size(ChatConstants.Dimensions.headerDisclaimerTop))
-                Text(
-                    text = ChatConstants.Strings.DISCLAIMER,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = ChatDisclaimer,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
                 )
             }
         }

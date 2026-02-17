@@ -21,11 +21,11 @@ Images and other assets used by the chat library live in **`shared/src/commonMai
 |-----------------------|-------------|
 | `Res.drawable.ai_avatar` | AI/bot avatar |
 | `Res.drawable.customer_avatar` | Customer/user avatar |
-| `Res.drawable.header_logo` | Header logo |
+| `Res.drawable.ac_logo` | Header logo (Air Canada) |
 
-**Keep density variants.** Each drawable used in code must exist in **all three** folders (`drawable/`, `drawable-xhdpi/`, `drawable-xxhdpi/`). Otherwise the runtime looks for e.g. `drawable-xxhdpi/header_logo.png` on xxhdpi devices and throws `MissingResourceException` if it's missing.
+**Keep density variants.** Each drawable used in code must exist in **all three** folders (`drawable/`, `drawable-xhdpi/`, `drawable-xxhdpi/`). Otherwise the runtime looks for e.g. `drawable-xxhdpi/ac_logo.png` on xxhdpi devices and throws `MissingResourceException` if it's missing.
 
-If the **host app** that consumes this library gets `MissingResourceException` for paths like `drawable-xhdpi/header_logo.png`, the host app is not packaging the library’s Compose resources. Ensure the host app depends on `compose.components.resources` and that the library AAR is up to date so its resources are merged into the APK.
+If the **host app** that consumes this library gets `MissingResourceException` for paths like `drawable-xhdpi/ac_logo.png`, the host app is not packaging the library’s Compose resources. Ensure the host app depends on `compose.components.resources` and that the library AAR is up to date so its resources are merged into the APK.
 
 ## Using images in code
 

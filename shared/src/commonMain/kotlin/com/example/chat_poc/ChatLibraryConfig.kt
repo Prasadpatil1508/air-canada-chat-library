@@ -1,5 +1,7 @@
 package com.example.chat_poc
 
+import com.example.chat_poc.ui.ChatConstants
+
 /**
  * Input configuration for the Chat Library (host → library).
  *
@@ -7,15 +9,21 @@ package com.example.chat_poc
  * Connect/start-chat API config is owned by the library (from local.properties at build time).
  *
  * @param authToken Optional token for library API calls (e.g. Bearer token).
- * @param displayTitle Title shown at the top of the bottom sheet.
+ * @param displayTitle Optional title/subtitle in header (e.g. "Chatting with Air Canada"); main title is "Virtual Assistant".
+ * @param displaySubtitle Optional subtitle line in header (e.g. user name: "Chatting with Bryan"). If null, shows default "Chatting with Air Canada".
  * @param displayMessages List of messages to show in the sheet (e.g. from host or dummy).
  */
 data class ChatLibraryConfig(
     val authToken: String = "",
     val displayTitle: String = "Hello from Chat Library",
+    val displaySubtitle: String? = null,
     val displayMessages: List<String> = defaultDisplayMessages(),
 ) {
     val hasAuthToken: Boolean get() = authToken.isNotBlank()
+
+    /** Subtitle shown in header below "Virtual Assistant". Use [displaySubtitle] for e.g. user name ("Chatting with …"); otherwise shows default. */
+    fun headerSubtitle(): String = displaySubtitle?.takeIf { it.isNotBlank() }
+        ?: ChatConstants.Strings.HEADER_SUBTITLE_DEFAULT
 }
 
 private fun defaultDisplayMessages(): List<String> = listOf(
