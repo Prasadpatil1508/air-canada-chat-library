@@ -4,10 +4,10 @@ package com.example.chat_poc
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.setUnhandledExceptionHook
 import kotlin.native.terminateWithUnhandledException
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.window.ComposeUIViewController
+import com.example.chat_poc.ui.theme.ChatPocTheme
 import com.example.chat_poc.ui.views.ChatBottomSheetContent
 import com.example.chat_poc.util.ChatLibraryLog
 import platform.UIKit.UIViewController
@@ -26,6 +26,12 @@ private fun installExceptionLogger() {
         terminateWithUnhandledException(throwable)
     }
 }
+
+/**
+ * Returns a default [ChatLibraryConfig] for use from Swift.
+ * Swift does not see Kotlin default parameters, so use this instead of ChatLibraryConfig().
+ */
+fun defaultChatLibraryConfig(): ChatLibraryConfig = ChatLibraryConfig()
 
 /**
  * Set from Swift before presenting so that when the user dismisses the sheet,
@@ -60,8 +66,8 @@ private fun ChatSheetComposable(
     config: ChatLibraryConfig,
     callbacks: ChatLibraryCallbacks?,
 ) {
-    ChatLibraryLog.d("iOS", "[4/5] inside Compose content block, setting MaterialTheme...")
-    MaterialTheme(colorScheme = lightColorScheme()) {
+    ChatLibraryLog.d("iOS", "[4/5] inside Compose content block, setting ChatPocTheme (white/dark background)...")
+    ChatPocTheme(darkTheme = isSystemInDarkTheme()) {
         ChatLibraryLog.d("iOS", "[5/5] composing ChatBottomSheetContent...")
         ChatBottomSheetContent(
             config = config,

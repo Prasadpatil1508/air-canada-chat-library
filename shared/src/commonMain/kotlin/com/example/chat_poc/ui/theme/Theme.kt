@@ -18,6 +18,9 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = Pink80,
     surface = HeaderBackgroundDark,
     onSurface = HeaderOnBackgroundDark,
+    surfaceVariant = HeaderBackgroundDark,
+    onSurfaceVariant = HeaderSubtitleDark,
+    background = HeaderBackgroundDark,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -29,7 +32,9 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Pink40,
     surface = HeaderBackgroundLight,
     onSurface = HeaderOnBackgroundLight,
+    surfaceVariant = HeaderBackgroundLight,
     onSurfaceVariant = ChatOnSurfaceVariant,
+    background = HeaderBackgroundLight,
     outline = ChatPrimary,
 )
 

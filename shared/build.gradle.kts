@@ -144,6 +144,12 @@ tasks.matching {
         dependsOn(generateCustomerAvatarBase64)
         dependsOn(generateHeaderLogoBase64)
     }
+    // iOS also uses Base64-embedded images (same as Android) so generated *Data.kt must exist
+    if (name.contains("Ios") || name.contains("ios")) {
+        dependsOn(generateAiAvatarBase64)
+        dependsOn(generateCustomerAvatarBase64)
+        dependsOn(generateHeaderLogoBase64)
+    }
 }
 tasks.matching { it.name.endsWith("SourcesJar") || it.name == "sourcesJar" }.configureEach { dependsOn(generateConnectConfig) }
 tasks.matching { it.name == "androidSourcesJar" }.configureEach {
@@ -191,10 +197,23 @@ kotlin {
     }
 
     // ---------- SOURCE SETS ----------
+    // Create iosMain so shared code in src/iosMain/ is used by all iOS targets (iosArm64, iosSimulatorArm64, iosX64).
+    // Without this, only iosArm64Main, iosSimulatorArm64Main, iosX64Main exist and "iosMain" is not found.
     sourceSets {
+        val iosMain by creating {
+            dependsOn(getByName("commonMain"))
+        }
+        getByName("iosArm64Main").dependsOn(iosMain)
+        getByName("iosSimulatorArm64Main").dependsOn(iosMain)
+        getByName("iosX64Main").dependsOn(iosMain)
+
         getByName("androidMain").kotlin.srcDir("build/generated/ai_avatar_base64")
         getByName("androidMain").kotlin.srcDir("build/generated/customer_avatar_base64")
         getByName("androidMain").kotlin.srcDir("build/generated/header_logo_base64")
+        // iOS uses the same Base64-embedded image data as Android (Compose Res.drawable not visible to Native)
+        iosMain.kotlin.srcDir("build/generated/ai_avatar_base64")
+        iosMain.kotlin.srcDir("build/generated/customer_avatar_base64")
+        iosMain.kotlin.srcDir("build/generated/header_logo_base64")
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -223,6 +242,17 @@ kotlin {
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+        }
+        // Skiko: one artifact per target (iosMain is shared, so adding all three there would require
+        // every target to resolve all three and fail variant matching). Add only the matching one per target.
+        getByName("iosArm64Main").dependencies {
+            implementation("org.jetbrains.skiko:skiko-iosarm64:0.8.18")
+        }
+        getByName("iosSimulatorArm64Main").dependencies {
+            implementation("org.jetbrains.skiko:skiko-iossimulatorarm64:0.8.18")
+        }
+        getByName("iosX64Main").dependencies {
+            implementation("org.jetbrains.skiko:skiko-iosx64:0.8.18")
         }
 
         commonTest.dependencies {

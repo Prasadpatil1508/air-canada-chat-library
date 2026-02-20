@@ -199,17 +199,91 @@ struct ContentView: View {
             showChat = true
         }
         .sheet(isPresented: $showChat) {
-            ChatSheetView()
+            ChatSheetView(isPresented: $showChat)
         }
     }
 }
 
 struct ChatSheetView: UIViewControllerRepresentable {
+    @Binding var isPresented: Bool
+
     func makeUIViewController(context: Context) -> UIViewController {
-        ChatPoc_iosKt.createBottomSheetViewController()
+        let config = ChatPoc_iosKt.defaultChatLibraryConfig()
+        let vc = ChatPoc_iosKt.createBottomSheetViewController(config: config, callbacks: nil)
+        ChatPoc_iosKt.setBottomSheetDismissHandler {
+            isPresented = false
+        }
+        return vc
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+```
+
+To pass a custom title or auth token, use the Swift-friendly overload (see library API) or build a custom `ChatLibraryConfig` with the parameters your framework exposes. For default behaviour, use `ChatPoc_iosKt.defaultChatLibraryConfig()`.
+
+To handle callbacks (e.g. button taps, data from library), implement `ChatLibraryCallbacks` in Swift and pass it instead of `nil`. The framework exports a helper type; see the library API for the exact protocol/class name.
+
+**Complete iOS app code (SwiftUI, copy once):**
+
+Replace your `ContentView.swift` with:
+
+```swift
+import SwiftUI
+import ChatSDK
+
+struct ContentView: View {
+    @State private var showChat = false
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Chat Library Test")
+                .font(.title)
+            Button("Open Chat Library") {
+                showChat = true
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sheet(isPresented: $showChat) {
+            ChatSheetView(isPresented: $showChat)
+        }
+    }
+}
+
+struct ChatSheetView: UIViewControllerRepresentable {
+    @Binding var isPresented: Bool
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        let config = ChatPoc_iosKt.defaultChatLibraryConfig()
+        let vc = ChatPoc_iosKt.createBottomSheetViewController(config: config, callbacks: nil)
+        ChatPoc_iosKt.setBottomSheetDismissHandler {
+            isPresented = false
+        }
+        return vc
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+#Preview {
+    ContentView()
+}
+```
+
+If your app uses the SwiftUI lifecycle, the entry point is typically:
+
+```swift
+// App entry (e.g. YourAppApp.swift or @main)
+import SwiftUI
+
+@main
+struct YourAppApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
 }
 ```
 
@@ -221,7 +295,8 @@ import ChatSDK
 
 class ViewController: UIViewController {
     @IBAction func openChatTapped(_ sender: Any) {
-        let vc = ChatPoc_iosKt.createBottomSheetViewController()
+        let config = ChatPoc_iosKt.defaultChatLibraryConfig()
+        let vc = ChatPoc_iosKt.createBottomSheetViewController(config: config, callbacks: nil)
         ChatPoc_iosKt.setBottomSheetDismissHandler { [weak vc] in
             vc?.dismiss(animated: true)
         }

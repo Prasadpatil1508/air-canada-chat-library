@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 
 /**
  * Expect/actual Markdown renderer. SDK-internal only; host app must not render Markdown.
- * Android: Markwon (native TextView + tables). iOS: UILabel + plain text (markdown stripped).
+ * Android: Markwon (TextView + tables). iOS: Compose-native (MarkdownText + block parsing for headers/lists).
  */
 expect object MarkdownRenderer {
     @Composable
