@@ -22,8 +22,8 @@ val ChatPrimaryLight = Color(0xFF4A7BC9)
 val ChatOnSurfaceVariant = Color(0xFF5C5C5C)
 val ChatDisclaimer = Color(0xFF6B7280)
 
-/** Light grey background for bottom section so the white input box is highlighted. */
-val BottomSectionBackground = Color(0xFFF2F2F7)
+/** Bottom section background – light theme (Figma: pure white). Dark theme uses [HeaderBackgroundDark] via MaterialTheme.colorScheme.surface. */
+val BottomSectionBackgroundLight = Color(0xFFFFFFFF)
 
 // ─── Bottom sheet header (light theme) ─────────────────────────────────────────────
 /** Header background – light theme. */
@@ -52,7 +52,49 @@ val HeaderSubtitleDark = Color(0xFFB0B0B0)
 // ─── Header elements (theme-invariant) ─────────────────────────────────────────────
 /** Air Canada logo accent (red) – same in light and dark. */
 val HeaderLogoAccent = Color(0xFFC8102E)
-/** Beta badge background – blue, same in both themes. */
+/** Beta badge border/icon blue – same in both themes. */
 val HeaderBetaBadgeBackground = Color(0xFF007AFF)
-/** Beta badge text – white. */
+/** Beta badge pill background – dark theme (dark/black). */
+val HeaderBetaBadgePillBackgroundDark = Color(0xFF2C2C2E)
+/** Beta badge text on dark pill – white. */
 val HeaderBetaBadgeOnBackground = Color(0xFFFFFFFF)
+
+// ─── Bottom section input (light theme) ─────────────────────────────────────────────
+/** Input field background – light (default/active). AltCardOverSheet. */
+val InputBackgroundLight = Color(0xFFF2F1EF)
+/** Input field inner background – light (disabled state, white interior). */
+val InputBackgroundDisabledLight = Color(0xFFFFFFFF)
+/** Input field border – light (disabled state). PlaceholderText. */
+val InputBorderLight = Color(0xFFBABBBC)
+/** Input placeholder – light (default/active). */
+val InputPlaceholderLight = Color(0xFF5C5C5C)
+/** Input placeholder – light (disabled, lighter). */
+val InputPlaceholderDisabledLight = Color(0xFFB0B0B0)
+/** Send button inactive – light. */
+val SendButtonInactiveLight = Color(0xFFCCCCCC)
+/** Send button active – same blue in both themes. */
+val SendButtonActive = Color(0xFF007AFF)
+
+// ─── Bottom section input (dark theme) ─────────────────────────────────────────────
+/** Input field background – dark (default/active). */
+val InputBackgroundDark = Color(0xFF2C2C2E)
+/** Input field inner background – dark (disabled state). */
+val InputBackgroundDisabledDark = Color(0xFF2C2C2E)
+/** Input field border – dark (disabled state). */
+val InputBorderDark = Color(0xFF696969)
+/** Input placeholder – dark. */
+val InputPlaceholderDark = Color(0xFFB0B0B0)
+/** Input placeholder – dark (disabled). */
+val InputPlaceholderDisabledDark = Color(0xFF636366)
+/** Send button inactive – dark. */
+val SendButtonInactiveDark = Color(0xFF48484A)
+
+// ─── Get-started floated buttons (first-time open) ───────────────────────────────────
+/** Get-started button background – light (white). */
+val GetStartedButtonBgLight = Color(0xFFFFFFFF)
+/** Get-started button text – light (black). */
+val GetStartedButtonTextLight = Color(0xFF1C1C1E)
+/** Get-started button background – dark (dark grey). */
+val GetStartedButtonBgDark = Color(0xFF2C2C2E)
+/** Get-started button text – dark (white). */
+val GetStartedButtonTextDark = Color(0xFFFFFFFF)

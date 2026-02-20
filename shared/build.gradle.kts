@@ -61,8 +61,8 @@ object LibraryConnectConfig {
     }
 }
 
-// ---------- AI AVATAR: embed as Base64 so it loads without assets/R (reliable in library AAR) ----------
-val aiAvatarSource = file("src/commonMain/composeResources/drawable/ai_avatar.png")
+// ---------- AI AGENT AVATAR: embed as Base64 so it loads without assets/R (reliable in library AAR) ----------
+val aiAvatarSource = file("src/commonMain/composeResources/drawable/ai_agent_avatar.png")
 val generateAiAvatarBase64 = tasks.register("generateAiAvatarBase64") {
     notCompatibleWithConfigurationCache("Task uses project.file() and script references for Base64 embedding")
     inputs.file(aiAvatarSource)

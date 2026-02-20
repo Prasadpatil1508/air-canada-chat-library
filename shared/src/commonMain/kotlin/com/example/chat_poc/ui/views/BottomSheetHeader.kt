@@ -35,6 +35,7 @@ import com.example.chat_poc.ui.rememberHeaderLogoPainter
 import com.example.chat_poc.ui.theme.HeaderBackgroundDark
 import com.example.chat_poc.ui.theme.HeaderBackgroundLight
 import com.example.chat_poc.ui.theme.HeaderBetaBadgeBackground
+import com.example.chat_poc.ui.theme.HeaderBetaBadgePillBackgroundDark
 import com.example.chat_poc.ui.theme.HeaderGrabHandleDark
 import com.example.chat_poc.ui.theme.HeaderGrabHandleLight
 import com.example.chat_poc.ui.theme.HeaderOnBackgroundDark
@@ -121,8 +122,7 @@ fun BottomSheetHeader(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center,
             ) {
                 Row(
@@ -150,7 +150,9 @@ fun BottomSheetHeader(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(dim.headerBetaPillRadius))
-                                .background(Color.White)
+                                .background(
+                                    if (isDark) HeaderBetaBadgePillBackgroundDark else Color.White,
+                                )
                                 .border(
                                     width = 1.5.dp,
                                     color = HeaderBetaBadgeBackground,
@@ -185,9 +187,14 @@ fun BottomSheetHeader(
             }
         }
 
-        // Row 2: Subtitle centered below the title
+        // Row 2: Subtitle centered below the title (minimal gap from title row, inner padding bottom)
         Box(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = dim.headerTitleToSubtitleSpacer,
+                    bottom = dim.headerContentPaddingBottom,
+                ),
             contentAlignment = Alignment.TopCenter,
         ) {
             Text(

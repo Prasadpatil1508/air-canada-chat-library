@@ -19,7 +19,7 @@ Images and other assets used by the chat library live in **`shared/src/commonMai
 
 | Resource name in code | Description |
 |-----------------------|-------------|
-| `Res.drawable.ai_avatar` | AI/bot avatar |
+| `Res.drawable.ai_agent_avatar` | AI agent avatar |
 | `Res.drawable.customer_avatar` | Customer/user avatar |
 | `Res.drawable.ac_logo` | Header logo (Air Canada) |
 
@@ -38,7 +38,7 @@ import org.jetbrains.compose.resources.painterResource
 import com.example.chat_poc.shared.generated.resources.Res
 
 Image(
-    painter = painterResource(Res.drawable.ai_avatar),
+    painter = painterResource(Res.drawable.ai_agent_avatar),
     contentDescription = "AI avatar",
     modifier = Modifier.size(24.dp)
 )
