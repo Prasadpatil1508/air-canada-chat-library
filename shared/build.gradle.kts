@@ -242,6 +242,9 @@ kotlin {
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            // Full markdown rendering (tables, italics, horizontal rules) to match Android
+            implementation("com.mikepenz:multiplatform-markdown-renderer:0.39.2")
+            implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.39.2")
         }
         // Skiko: one artifact per target (iosMain is shared, so adding all three there would require
         // every target to resolve all three and fail variant matching). Add only the matching one per target.
