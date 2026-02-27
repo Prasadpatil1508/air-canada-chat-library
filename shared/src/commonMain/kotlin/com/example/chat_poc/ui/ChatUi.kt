@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.chat_poc.connect.model.MessageDirection
+import com.example.chat_poc.ui.theme.OutgoingBubbleBackground
+import com.example.chat_poc.ui.theme.OutgoingBubbleOnBackground
 
 /**
  * Chat UI constants and composables. Change these values to adjust bubble look and layout.
@@ -71,22 +73,33 @@ fun ChatBubble(
         MessageDirection.COMMON -> Alignment.CenterStart
     }
     val bubbleColor = when (direction) {
-        MessageDirection.OUTGOING -> MaterialTheme.colorScheme.primary
+        MessageDirection.OUTGOING -> OutgoingBubbleBackground
         MessageDirection.INCOMING -> MaterialTheme.colorScheme.surfaceVariant
         MessageDirection.COMMON -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
     }
     val contentColor = when (direction) {
-        MessageDirection.OUTGOING -> MaterialTheme.colorScheme.onPrimary
+        MessageDirection.OUTGOING -> OutgoingBubbleOnBackground
         MessageDirection.INCOMING -> MaterialTheme.colorScheme.onSurfaceVariant
         MessageDirection.COMMON -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
+    val bubbleShape = if (direction == MessageDirection.OUTGOING) {
+        // Figma: outgoing bubble has sharp top-right corner; other three corners rounded
+        RoundedCornerShape(
+            topStart = ChatUi.bubbleCornerRadius,
+            topEnd = 0.dp,
+            bottomEnd = ChatUi.bubbleCornerRadius,
+            bottomStart = ChatUi.bubbleCornerRadius,
+        )
+    } else {
+        RoundedCornerShape(ChatUi.bubbleCornerRadius)
+    }
     Box(
         modifier = if (direction == MessageDirection.OUTGOING) modifier else modifier.fillMaxWidth(),
         contentAlignment = alignment,
     ) {
         Surface(
-            shape = RoundedCornerShape(ChatUi.bubbleCornerRadius),
+            shape = bubbleShape,
             color = bubbleColor,
             modifier = if (direction == MessageDirection.OUTGOING) Modifier else Modifier.fillMaxWidth(ChatUi.bubbleMaxWidthFraction),
         ) {

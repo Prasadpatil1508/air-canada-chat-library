@@ -16,7 +16,7 @@ plugins {
 }
 
 // Repo-specific groupId avoids GitHub Packages 422 after repo transfer (package was under previous owner).
-val githubRepo = System.getenv("GITHUB_REPOSITORY") ?: "Prasadpatil1508/air-canada-chat-library"
+val githubRepo = System.getenv("GITHUB_REPOSITORY") ?: "PrathameshAdate05/air-canada-chat-library"
 group = "io.github." + githubRepo.lowercase().replace("/", ".").replace("-", "_")
 version = project.findProperty("LIB_VERSION")?.toString() ?: "1.0.0"
 
@@ -151,7 +151,10 @@ tasks.matching {
         dependsOn(generateHeaderLogoBase64)
     }
 }
-tasks.matching { it.name.endsWith("SourcesJar") || it.name == "sourcesJar" }.configureEach { dependsOn(generateConnectConfig) }
+tasks.matching { it.name.endsWith("SourcesJar") || it.name == "sourcesJar" }.configureEach {
+    dependsOn(generateConnectConfig)
+    dependsOn(generateAiAvatarBase64, generateCustomerAvatarBase64, generateHeaderLogoBase64)
+}
 tasks.matching { it.name == "androidSourcesJar" }.configureEach {
     dependsOn(generateAiAvatarBase64)
     dependsOn(generateCustomerAvatarBase64)
@@ -190,7 +193,7 @@ kotlin {
         }
         target.binaries.framework {
             baseName = "ChatSDK"
-            isStatic = true
+            isStatic = false
             freeCompilerArgs += "-Xobjc-generics"
             xcf.add(this)
         }
@@ -275,7 +278,7 @@ publishing {
 
         maven {
             name = "GitHubPackages"
-            val repo = System.getenv("GITHUB_REPOSITORY") ?: "Prasadpatil1508/air-canada-chat-library"
+            val repo = System.getenv("GITHUB_REPOSITORY") ?: "PrathameshAdate05/air-canada-chat-library"
             url = uri("https://maven.pkg.github.com/$repo")
             credentials {
                 username = System.getenv("GITHUB_ACTOR") ?: ""

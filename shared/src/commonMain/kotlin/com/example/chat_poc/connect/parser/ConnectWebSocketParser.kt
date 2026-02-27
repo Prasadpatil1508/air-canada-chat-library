@@ -70,6 +70,12 @@ private fun parseBotMessage(content: String, json: Json): List<ChatItem> {
     if (!content.trimStart().startsWith("{")) return listOf(ChatItem.Text(content, Sender.BOT))
     return try {
         val obj = json.parseToJsonElement(content).jsonObject
+        // Backend may send {"t":"md","md":"...markdown..."} — extract and treat as markdown
+        val tType = obj["t"]?.jsonPrimitive?.content?.trim('"') ?: ""
+        if (tType == "md") {
+            val mdContent = obj["md"]?.jsonPrimitive?.content ?: ""
+            return listOf(ChatItem.Markdown(mdContent))
+        }
         val messageType = obj["messageType"]?.jsonPrimitive?.content?.trim('"') ?: ""
         when (messageType) {
             "markdown" -> {

@@ -73,6 +73,8 @@ object ChatConstants {
 
         /** Prefix for incoming message label (e.g. "BETA 09:54"). */
         const val INCOMING_LABEL_PREFIX = "BETA "
+        /** Label for outgoing (user) messages shown at top right above the bubble (Figma). */
+        const val OUTGOING_SENDER_LABEL = "You"
         /** Default agent name when [ChatMessage.displayName] is null/blank or system (shown next to avatar). */
         const val INCOMING_AGENT_NAME_DEFAULT = "AC Agent"
         /** displayName values treated as system/internal; show [INCOMING_AGENT_NAME_DEFAULT] instead. */

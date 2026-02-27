@@ -21,6 +21,7 @@ import com.example.chat_poc.connect.model.ChatMessage
 import com.example.chat_poc.ui.ChatConstants
 import com.example.chat_poc.ui.ChatUi
 import com.example.chat_poc.markdown.MarkdownRenderer
+import com.example.chat_poc.markdown.preprocessMarkdownForRender
 
 /**
  * Renders a chat message (plain text, Markdown, quick replies, or flight status). Markdown is rendered inside the SDK via
@@ -111,7 +112,7 @@ fun ChatMessageContent(
         }
         msg.isMarkdown && msg.text.trim().isNotEmpty() -> {
             Box(modifier = widthModifier) {
-                MarkdownRenderer.Render(markdown = msg.text)
+                MarkdownRenderer.Render(markdown = preprocessMarkdownForRender(msg.text))
             }
         }
         else -> {

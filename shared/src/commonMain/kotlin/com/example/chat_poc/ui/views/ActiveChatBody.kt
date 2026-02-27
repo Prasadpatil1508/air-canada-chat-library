@@ -6,7 +6,6 @@ import com.example.chat_poc.ui.ChatBubble
 import com.example.chat_poc.ui.ChatConstants
 import com.example.chat_poc.ui.ChatUi
 import com.example.chat_poc.ui.rememberAiAvatarPainter
-import com.example.chat_poc.ui.rememberCustomerAvatarPainter
 import com.example.chat_poc.util.formatMessageTime
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -119,11 +118,9 @@ private fun ActiveChatMessageItem(
     val onQuickReplyCb: (String) -> Unit = { value -> onQuickReply(value); Unit }
     val hasQuickReplies = !msg.quickReplies.isNullOrEmpty()
     val showAvatar = index == 0 || messages.getOrNull(index - 1)?.direction != msg.direction
-    val showTime = index == messages.lastIndex || messages.getOrNull(index + 1)?.direction != msg.direction
     val timeText = formatMessageTime(msg.timestamp).ifEmpty { "—" }
     val avatarSize = ChatConstants.Dimensions.avatarSize
     val avatarSpacer = ChatConstants.Dimensions.avatarSpacer
-    val outgoingAvatarSize = ChatConstants.Dimensions.outgoingAvatarSize
 
     if (hasQuickReplies) {
         Column(
@@ -143,6 +140,16 @@ private fun ActiveChatMessageItem(
                         .align(Alignment.End),
                 )
             }
+            if (msg.direction == MessageDirection.OUTGOING && !msg.isPending) {
+                Text(
+                    text = "$timeText ${ChatConstants.Strings.OUTGOING_SENDER_LABEL}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .padding(bottom = ChatUi.messageTimestampSpacing)
+                        .align(Alignment.End),
+                )
+            }
             ChatMessageContent(
                 msg = msg,
                 modifier = Modifier.wrapContentWidth(Alignment.End),
@@ -150,17 +157,24 @@ private fun ActiveChatMessageItem(
                 onFlightActionClick = onFlightActionClick,
                 suggestedRepliesStyle = true,
             )
-            if (showTime && msg.direction == MessageDirection.OUTGOING) {
-                Text(
-                    text = timeText,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = ChatUi.messageTimestampSpacing),
-                )
-            }
         }
     } else {
         Column(modifier = Modifier.fillMaxWidth()) {
+            // Outgoing (Figma): time + "You" at top right above bubble; only when message is confirmed (not pending)
+            if (msg.direction == MessageDirection.OUTGOING && !msg.isPending) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = ChatUi.messageTimestampSpacing),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Text(
+                        text = "$timeText ${ChatConstants.Strings.OUTGOING_SENDER_LABEL}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
             BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
                 val maxBubbleWidth = maxWidth * ChatUi.bubbleMaxWidthFraction
                 Row(
@@ -226,38 +240,13 @@ private fun ActiveChatMessageItem(
                             )
                         }
                     }
+                    // Outgoing: no user avatar (Figma uses "time + You" at top instead)
                     if (msg.direction == MessageDirection.OUTGOING) {
-                        if (showAvatar) {
-                            Image(
-                                painter = rememberCustomerAvatarPainter(),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(outgoingAvatarSize)
-                                    .padding(start = avatarSpacer),
-                            )
-                        } else {
-                            Spacer(
-                                modifier = Modifier
-                                    .size(avatarSize)
-                                    .padding(start = avatarSpacer),
-                            )
-                        }
+                        // No avatar; keep layout balanced with minimal spacer if needed
                     }
                 }
             }
-            if (showTime && msg.direction == MessageDirection.OUTGOING) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    Text(
-                        text = timeText,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = ChatUi.messageTimestampSpacing),
-                    )
-                }
-            }
+            // No bottom timestamp: incoming/common show time only at top with agent name; outgoing uses top-right "time You"
         }
     }
 }

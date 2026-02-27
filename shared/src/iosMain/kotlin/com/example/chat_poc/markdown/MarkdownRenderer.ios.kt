@@ -11,12 +11,6 @@ import androidx.compose.ui.unit.dp
 import com.mikepenz.markdown.model.DefaultMarkdownTypography
 import com.mikepenz.markdown.m3.Markdown
 
-/** Convert HTML <a href="...">text</a> to markdown [text](url) for the renderer. */
-private fun preprocessHtmlLinks(markdown: String): String {
-    return Regex("""<a\s+href\s*=\s*["']([^"']+)["'][^>]*>([^<]*)</\s*a\s*>""", RegexOption.IGNORE_CASE)
-        .replace(markdown) { mr -> "[${mr.groupValues[2].trim()}](${mr.groupValues[1].trim()})" }
-}
-
 /** Typography with all elements at body size so markdown matches normal message text. */
 @Composable
 private fun messageSizeMarkdownTypography(): DefaultMarkdownTypography {
@@ -51,7 +45,7 @@ actual object MarkdownRenderer {
         val trimmed = markdown.trim()
         if (trimmed.isEmpty()) return
 
-        val content = remember(trimmed) { preprocessHtmlLinks(trimmed) }
+        val content = remember(trimmed) { trimmed }
         val typography = messageSizeMarkdownTypography()
 
         Markdown(

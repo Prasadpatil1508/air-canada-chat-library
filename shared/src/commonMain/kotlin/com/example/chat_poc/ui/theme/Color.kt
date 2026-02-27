@@ -22,6 +22,11 @@ val ChatPrimaryLight = Color(0xFF4A7BC9)
 val ChatOnSurfaceVariant = Color(0xFF5C5C5C)
 val ChatDisclaimer = Color(0xFF6B7280)
 
+/** Outgoing (user) message bubble background – Grey/Grey-9 (#2A2A2A), same in light and dark mode. */
+val OutgoingBubbleBackground = Color(0xFF2A2A2A)
+/** Text/content color on outgoing bubble (light for contrast). */
+val OutgoingBubbleOnBackground = Color(0xFFFFFFFF)
+
 /** Bottom section background – light theme (Figma: pure white). Dark theme uses [HeaderBackgroundDark] via MaterialTheme.colorScheme.surface. */
 val BottomSectionBackgroundLight = Color(0xFFFFFFFF)
 

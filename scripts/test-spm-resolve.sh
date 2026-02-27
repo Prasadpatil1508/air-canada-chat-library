@@ -11,7 +11,7 @@ let p = Package(
     name: \"Test\",
     platforms: [.iOS(.v14)],
     dependencies: [
-        .package(url: \"https://github.com/Prasadpatil1508/chat-library-poc\", exact: \"1.0.28\")
+        .package(url: \"https://github.com/PrathameshAdate05/chat-library-poc\", exact: \"1.0.28\")
     ],
     targets: [
         .target(name: \"Test\", dependencies: [.product(name: \"ChatSDK\", package: \"chat-library-poc\")])
