@@ -100,9 +100,9 @@ jobs:
           CHECKSUM=$(cat shared/build/ChatSDK.xcframework.zip.sha256)
           NEW_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/ChatSDK.xcframework.zip"
 
-          # Update URL line
+          # Update URL line (match any github.com owner/repo so it always gets replaced)
           sed -i '' \
-            "s|url: \"https://github.com/${{ github.repository }}/releases/download/v[^\"]*\"|url: \"${NEW_URL}\"|" \
+            "s|url: \"https://github.com/[^\"]*/releases/download/[^\"]*\"|url: \"${NEW_URL}\"|" \
             Package.swift
 
           # Update checksum line
@@ -114,7 +114,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add Package.swift
           git commit -m "Update binary target to ${TAG} [skip ci]"
-          git push origin HEAD:main
+          git push origin HEAD:refs/heads/main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
