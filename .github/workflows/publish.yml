@@ -80,7 +80,8 @@ jobs:
           cd shared/build/XCFrameworks/release
           XCF=$(find . -maxdepth 1 -type d -name '*.xcframework' | head -1)
           zip -r ChatSDK.xcframework.zip "$XCF"
-          shasum -a 256 ChatSDK.xcframework.zip | awk '{ print $1 }' > ../../../ChatSDK.xcframework.zip.sha256
+          # Write checksum to shared/build/ so release upload and Package.swift update can find it
+          shasum -a 256 ChatSDK.xcframework.zip | awk '{ print $1 }' > ../../ChatSDK.xcframework.zip.sha256
 
       - uses: softprops/action-gh-release@v2
         if: steps.check_release.outputs.exists == 'false'
