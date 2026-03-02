@@ -6,8 +6,8 @@ on:
       - 'v*'
 
 permissions:
-  contents: write   # create GitHub Release and upload assets
-  packages: write  # publish Android library to GitHub Packages (Maven)
+  contents: write
+  packages: write
 
 jobs:
   publish:
@@ -19,14 +19,34 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG)
+          if [ "$STATUS" = "200" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-java@v4
+        if: steps.check_release.outputs.exists == 'false'
         with:
           distribution: temurin
           java-version: 17
           cache: gradle
 
       - name: Inject Connect config for remote library build
+        if: steps.check_release.outputs.exists == 'false'
         run: |
           echo "API_GATEWAY=${{ secrets.API_GATEWAY }}" >> local.properties
           echo "CONTACT_FLOW_ID=${{ secrets.CONTACT_FLOW_ID }}" >> local.properties
@@ -34,6 +54,7 @@ jobs:
           echo "REGION=${{ secrets.REGION }}" >> local.properties
 
       - name: Publish Android library to GitHub Packages
+        if: steps.check_release.outputs.exists == 'false'
         run: |
           chmod +x gradlew
           VERSION="${GITHUB_REF#refs/tags/v}"
@@ -47,12 +68,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Assemble XCFramework
+        if: steps.check_release.outputs.exists == 'false'
         run: |
           ./gradlew :shared:assembleSharedReleaseXCFramework \
             --no-daemon \
             --no-configuration-cache
 
       - name: Zip XCFramework and compute checksum
+        if: steps.check_release.outputs.exists == 'false'
         run: |
           cd shared/build/XCFrameworks/release
           XCF=$(find . -maxdepth 1 -type d -name '*.xcframework' | head -1)
@@ -60,10 +83,49 @@ jobs:
           shasum -a 256 ChatSDK.xcframework.zip | awk '{ print $1 }' > ../../../ChatSDK.xcframework.zip.sha256
 
       - uses: softprops/action-gh-release@v2
+        if: steps.check_release.outputs.exists == 'false'
         with:
           files: |
             shared/build/XCFrameworks/release/ChatSDK.xcframework.zip
             shared/build/ChatSDK.xcframework.zip.sha256
           generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Package.swift with new URL and checksum
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          CHECKSUM=$(cat shared/build/ChatSDK.xcframework.zip.sha256)
+          NEW_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/ChatSDK.xcframework.zip"
+
+          # Update URL line
+          sed -i '' \
+            "s|url: \"https://github.com/${{ github.repository }}/releases/download/v[^\"]*\"|url: \"${NEW_URL}\"|" \
+            Package.swift
+
+          # Update checksum line
+          sed -i '' \
+            "s|checksum: \"[a-f0-9]*\"|checksum: \"${CHECKSUM}\"|" \
+            Package.swift
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Package.swift
+          git commit -m "Update binary target to ${TAG} [skip ci]"
+          git push origin HEAD:main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move tag to latest commit
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -d "${TAG}"
+          git push origin ":refs/tags/${TAG}"
+          git tag "${TAG}"
+          git push origin "${TAG}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
