@@ -74,14 +74,33 @@ jobs:
             --no-daemon \
             --no-configuration-cache
 
+      - name: Locate and verify XCFramework build output
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          echo "=== Listing shared/build/XCFrameworks/ ==="
+          find shared/build/XCFrameworks -type d -name "*.xcframework" 2>/dev/null || echo "No xcframework found under shared/build/XCFrameworks"
+          echo "=== Full tree ==="
+          ls -la shared/build/XCFrameworks/ 2>/dev/null || echo "shared/build/XCFrameworks does not exist"
+          ls -la shared/build/XCFrameworks/release/ 2>/dev/null || echo "shared/build/XCFrameworks/release does not exist"
+
+          # Locate the built xcframework (name may vary)
+          XCF=$(find shared/build/XCFrameworks/release -maxdepth 1 -type d -name "*.xcframework" | head -1)
+          if [ -z "$XCF" ]; then
+            echo "ERROR: No .xcframework found in shared/build/XCFrameworks/release/"
+            exit 1
+          fi
+          echo "Found: $XCF"
+          # Export path for the next step
+          echo "XCF_PATH=$XCF" >> $GITHUB_ENV
+
       - name: Commit XCFramework to repo (path-based SPM for private repo)
         if: steps.check_release.outputs.exists == 'false'
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
 
-          # Remove old framework and replace with newly built one
+          # Remove old framework and replace with newly built one (use dynamic path from previous step)
           rm -rf ChatSDK.xcframework
-          cp -R shared/build/XCFrameworks/release/ChatSDK.xcframework ChatSDK.xcframework
+          cp -R "$XCF_PATH" ChatSDK.xcframework
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
