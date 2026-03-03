@@ -1,0 +1,8 @@
+framework module "ChatSDK" {
+    umbrella header "ChatSDK.h"
+
+    export *
+    module * { export * }
+
+    use Foundation
+}
