@@ -74,51 +74,33 @@ jobs:
             --no-daemon \
             --no-configuration-cache
 
-      - name: Zip XCFramework and compute checksum
-        if: steps.check_release.outputs.exists == 'false'
-        run: |
-          cd shared/build/XCFrameworks/release
-          XCF=$(find . -maxdepth 1 -type d -name '*.xcframework' | head -1)
-          zip -r ChatSDK.xcframework.zip "$XCF"
-          # Write checksum to shared/build/ so release upload and Package.swift update can find it
-          shasum -a 256 ChatSDK.xcframework.zip | awk '{ print $1 }' > ../../ChatSDK.xcframework.zip.sha256
-
-      - uses: softprops/action-gh-release@v2
-        if: steps.check_release.outputs.exists == 'false'
-        with:
-          files: |
-            shared/build/XCFrameworks/release/ChatSDK.xcframework.zip
-            shared/build/ChatSDK.xcframework.zip.sha256
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update Package.swift with new URL and checksum
+      - name: Commit XCFramework to repo (path-based SPM for private repo)
         if: steps.check_release.outputs.exists == 'false'
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
-          CHECKSUM=$(cat shared/build/ChatSDK.xcframework.zip.sha256)
-          NEW_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/ChatSDK.xcframework.zip"
 
-          # Update URL line (match any github.com owner/repo so it always gets replaced)
-          sed -i '' \
-            "s|url: \"https://github.com/[^\"]*/releases/download/[^\"]*\"|url: \"${NEW_URL}\"|" \
-            Package.swift
-
-          # Update checksum line
-          sed -i '' \
-            "s|checksum: \"[a-f0-9]*\"|checksum: \"${CHECKSUM}\"|" \
-            Package.swift
+          # Remove old framework and replace with newly built one
+          rm -rf ChatSDK.xcframework
+          cp -R shared/build/XCFrameworks/release/ChatSDK.xcframework ChatSDK.xcframework
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Package.swift
-          git commit -m "Update binary target to ${TAG} [skip ci]"
+          git add ChatSDK.xcframework
+          git commit -m "Update ChatSDK.xcframework to ${TAG} [skip ci]" || echo "No changes to commit"
           git push origin HEAD:refs/heads/main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Move tag to latest commit
+      - name: Create GitHub Release (for changelog and Android assets)
+        if: steps.check_release.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move tag to latest commit (so tag points to commit with updated XCFramework)
         if: steps.check_release.outputs.exists == 'false'
         run: |
           TAG="${GITHUB_REF#refs/tags/}"

@@ -11,3 +11,7 @@ xcuserdata
 .env
 
 .kotlin
+
+# Explicitly track the root-level XCFramework (path-based SPM binary target for private repo).
+# Do NOT add ChatSDK.xcframework here; it must be committed so iOS apps can fetch it via SSH.
+!ChatSDK.xcframework

@@ -20,6 +20,8 @@ data class ChatMessage(
     val isPending: Boolean = false,
     /** True when send was attempted but no echo received (show "Failed to send"). */
     val sendFailed: Boolean = false,
+    /** True when this incoming message is from a real (human) agent; use agent avatar. False = AI, use AI avatar. */
+    val isRealAgent: Boolean = false,
 )
 
 enum class MessageDirection { INCOMING, OUTGOING, COMMON }

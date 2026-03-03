@@ -83,6 +83,15 @@ object ChatConstants {
         /** Fallback title above quick reply buttons when the response does not provide one. */
         const val QUICK_REPLIES_DEFAULT_TITLE = "Quick replies"
 
+        /** Feedback widget title. */
+        const val FEEDBACK_TITLE = "Share your feedback!"
+        /** Feedback widget subtitle. */
+        const val FEEDBACK_SUBTITLE = "Was this virtual assistant easy to use today?"
+        /** Accessibility description for thumbs up button. */
+        const val FEEDBACK_THUMBS_UP_DESCRIPTION = "Thumbs up"
+        /** Accessibility description for thumbs down button. */
+        const val FEEDBACK_THUMBS_DOWN_DESCRIPTION = "Thumbs down"
+
         /** Get-started prompt shown when chat is opened for the first time (floated buttons). */
         const val GET_STARTED_PROMPT = "Not sure where to get started?"
 
@@ -208,5 +217,15 @@ object ChatConstants {
         val getStartedButtonPaddingHorizontal: Dp = 15.dp
         /** Default Material shadow elevation for floated buttons. */
         val getStartedButtonShadowElevation: Dp = 10.dp
+
+        // Feedback widget
+        val feedbackCardRadius: Dp = 16.dp
+        val feedbackCardPaddingHorizontal: Dp = 24.dp
+        val feedbackCardPaddingVertical: Dp = 20.dp
+        val feedbackButtonSize: Dp = 56.dp
+        val feedbackButtonSpacing: Dp = 24.dp
+        val feedbackIconSize: Dp = 28.dp
+        val feedbackTitleBottomSpacing: Dp = 8.dp
+        val feedbackSubtitleBottomSpacing: Dp = 20.dp
     }
 }

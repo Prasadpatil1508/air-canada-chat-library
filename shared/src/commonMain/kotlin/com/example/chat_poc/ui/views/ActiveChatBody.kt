@@ -5,6 +5,9 @@ import com.example.chat_poc.connect.model.MessageDirection
 import com.example.chat_poc.ui.ChatBubble
 import com.example.chat_poc.ui.ChatConstants
 import com.example.chat_poc.ui.ChatUi
+import androidx.compose.foundation.isSystemInDarkTheme
+import com.example.chat_poc.ui.rememberAcAgentDarkAvatarPainter
+import com.example.chat_poc.ui.rememberAcAgentLightAvatarPainter
 import com.example.chat_poc.ui.rememberAiAvatarPainter
 import com.example.chat_poc.util.formatMessageTime
 import androidx.compose.foundation.Image
@@ -117,7 +120,10 @@ private fun ActiveChatMessageItem(
 ) {
     val onQuickReplyCb: (String) -> Unit = { value -> onQuickReply(value); Unit }
     val hasQuickReplies = !msg.quickReplies.isNullOrEmpty()
-    val showAvatar = index == 0 || messages.getOrNull(index - 1)?.direction != msg.direction
+    val prevMsg = messages.getOrNull(index - 1)
+    val showAvatar = index == 0
+        || prevMsg?.direction != msg.direction
+        || prevMsg?.isRealAgent != msg.isRealAgent
     val timeText = formatMessageTime(msg.timestamp).ifEmpty { "—" }
     val avatarSize = ChatConstants.Dimensions.avatarSize
     val avatarSpacer = ChatConstants.Dimensions.avatarSpacer
@@ -188,7 +194,11 @@ private fun ActiveChatMessageItem(
                     if (msg.direction == MessageDirection.INCOMING || msg.direction == MessageDirection.COMMON) {
                         if (showAvatar) {
                             Image(
-                                painter = rememberAiAvatarPainter(),
+                                painter = if (msg.isRealAgent) {
+                                    if (isSystemInDarkTheme()) rememberAcAgentDarkAvatarPainter() else rememberAcAgentLightAvatarPainter()
+                                } else {
+                                    rememberAiAvatarPainter()
+                                },
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(avatarSize)

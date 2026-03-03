@@ -186,6 +186,34 @@ fun ChatBottomSheetContent(
         }
     }
 
+    // Dummy messages for testing AI vs real agent avatars (light/dark mode). Remove when real payload supports isRealAgent.
+    LaunchedEffect(isConnected, chatSession) {
+        if (isConnected && chatSession != null && chatMessages.isEmpty()) {
+            chatMessages.addAll(
+                listOf(
+                    ChatMessage(
+                        id = "test-ai",
+                        text = "Test message from AI (AI avatar).",
+                        participantId = null,
+                        displayName = "AI Assistant",
+                        timestamp = "00:00",
+                        direction = MessageDirection.INCOMING,
+                        isRealAgent = false,
+                    ),
+                    ChatMessage(
+                        id = "test-agent",
+                        text = "Test message from real agent (AC Agent avatar – switch device theme to see light/dark icon).",
+                        participantId = null,
+                        displayName = "AC Agent",
+                        timestamp = "00:01",
+                        direction = MessageDirection.INCOMING,
+                        isRealAgent = true,
+                    ),
+                )
+            )
+        }
+    }
+
     ChatLibraryLog.d("BottomSheet", "Content composing: title=${config.displayTitle}, hasConnectConfig=$hasConnectConfig")
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
